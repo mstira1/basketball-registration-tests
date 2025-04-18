@@ -1,1 +1,25 @@
+name: Kör Selenium-tester
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Hämta koden
+      uses: actions/checkout@v3
+
+    - name: Installera Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Kör tester
+      run: mvn clean install
 
