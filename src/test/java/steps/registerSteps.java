@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 public class registerSteps {
     WebDriver driver;
-    
 
 private WebElement waitForElement(By locator) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -33,27 +32,14 @@ private WebElement waitForElement(By locator) {
 
     @Given("User navigates to the registration page with {string}")
     public void User_navigates_to_the_registration_page(String browser) {
-        WebDriverManager.firefoxdriver().setup();
-        WebDriverManager.chromedriver().setup();
+
+
         if (browser.equals("chrome")) {
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("--headless=new");
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--disable-gpu");
-            options.addArguments("--remote-allow-origins=*");
-            options.addArguments("--disable-extensions");
-            options.addArguments("--window-size=1920,1080");
-            driver = new ChromeDriver(options);
-
-
+            WebDriverManager.chromedriver().setup();
+            driver = new ChromeDriver();
         } else if (browser.equals("fireFox")) {
-            FirefoxOptions options = new FirefoxOptions();
-            options.addArguments("--headless");
-            driver = new FirefoxDriver(options);
-
-
-
+            WebDriverManager.firefoxdriver().setup();
+            driver = new FirefoxDriver();
         }
         driver.manage().window().maximize();
         driver.get("https://membership.basketballengland.co.uk/NewSupporterAccount");
@@ -61,10 +47,10 @@ private WebElement waitForElement(By locator) {
     }
 
 
-    @And("Entered date of brith {string}")
-    public void entered_date_of_brith(String brith) {
+    @And("Entered date of birth {string}")
+    public void entered_date_of_brith(String birth) {
 
-        driver.findElement(By.xpath("//*[@id=\"dp\"]")).sendKeys(brith);
+        driver.findElement(By.xpath("//*[@id=\"dp\"]")).sendKeys(birth);
     }
 
     @And("Entered first name {string}")
@@ -195,6 +181,3 @@ private WebElement waitForElement(By locator) {
 
 
 }
-
-
-
