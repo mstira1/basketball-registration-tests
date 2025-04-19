@@ -1,45 +1,24 @@
-name: Run Selenium Tests
+name: Kör tester automatiskt
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main ]     # kör varje gång du pushar till main
   pull_request:
-    branches: [ main ]
+    branches: [ main ]     # även när någon gör en pull request
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        browser: [chrome, fireFox]
-
-    env:
-      CI: true
-
     steps:
-    - name: Checkout code
+    - name: Klona repot
       uses: actions/checkout@v3
 
-    - name: Set up Java
+    - name: Installera Java och Maven
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Cache Maven packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-
-    - name: Set up Chrome
-      uses: browser-actions/setup-chrome@latest
-
-    - name: Set up Firefox
-      uses: browser-actions/setup-firefox@latest
-
-    - name: Run tests with Maven on ${{ matrix.browser }}
-      run: mvn test -Dbrowser=${{ matrix.browser }}
+    - name: Bygg projektet och kör tester
+      run: mvn clean test
