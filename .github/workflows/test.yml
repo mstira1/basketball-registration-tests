@@ -1,25 +1,45 @@
-name: Kör Selenium-tester
+name: Run Selenium Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        browser: [chrome, fireFox]
+
+    env:
+      CI: true
+
     steps:
-    - name: Hämta koden
+    - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Installera Java
+    - name: Set up Java
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Kör tester
-      run: mvn clean install
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
 
+    - name: Set up Chrome
+      uses: browser-actions/setup-chrome@latest
+
+    - name: Set up Firefox
+      uses: browser-actions/setup-firefox@latest
+
+    - name: Run tests with Maven on ${{ matrix.browser }}
+      run: mvn test -Dbrowser=${{ matrix.browser }}
