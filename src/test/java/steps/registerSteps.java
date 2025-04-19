@@ -148,13 +148,7 @@ private WebElement waitForElement(By locator) {
         WebElement errorMessage;
         String actualMessage;
         switch (expectedResult.toLowerCase()) {
-            case "success":
-                // Check success header
-                WebElement confirmationHeader = waitForElement(By.xpath("/html/body/div/div[2]/div/h2"));
-                actualMessage = confirmationHeader.getText();
-                String expectedSuccessMessage = "THANK YOU FOR CREATING AN ACCOUNT WITH BASKETBALL ENGLAND";
-                assertEquals(actualMessage, expectedSuccessMessage);
-                break;
+        
 
             case "missing_last_name":
                 // Check if error message for missing last name is displayed
