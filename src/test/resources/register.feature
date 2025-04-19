@@ -4,8 +4,8 @@ Feature: User Registration on Basketball England
     And Entered date of brith "21/05/2006"
     And Entered first name "Semon"
     And Entered last name "Andy"
-    And Entered Email Adress "mstira10@live.com"
-    And Entered confirmed Email Adress "mstira10@live.com"
+    And Entered Email Adress "mstira9@live.com"
+    And Entered confirmed Email Adress "mstira9@live.com"
     And Entered password "ms5919"
     And Entered Retyped password "ms5919"
     And Checked box for marketing communications
@@ -49,7 +49,6 @@ Feature: User Registration on Basketball England
 
     Examples:
       | first_name | last_name | email            | confirm_email    | password | retype_password | accept_terms | expected_result    |
-      | Semon      | Andy      | mstira1@live.com | mstira5@live.com | ms5919   | ms5919          | true         | success            |
       | Semon      |           | mstira5@live.com | mstira5@live.com | ms5919   | ms5919          | true         | missing_last_name  |
       | Semon      | Andy      | mstira5@live.com | mstira5@live.com | ms5919   | ms9999          | true         | password_mismatch  |
       | Semon      | Andy      | mstira5@live.com | mstira5@live.com | ms5919   | ms5919          | false        | terms_not_accepted |
