@@ -1,11 +1,11 @@
 Feature: User Registration on Basketball England
   Scenario: Register user
     Given User navigates to the registration page with "chrome"
-    And Entered date of brith "21/05/2006"
+    And Entered date of birth "21/05/2006"
     And Entered first name "Semon"
     And Entered last name "Andy"
-    And Entered Email Adress "mstira9@live.com"
-    And Entered confirmed Email Adress "mstira9@live.com"
+    And Entered Email Adress "mstira8@live.com"
+    And Entered confirmed Email Adress "mstira8@live.com"
     And Entered password "ms5919"
     And Entered Retyped password "ms5919"
     And Checked box for marketing communications
@@ -17,7 +17,7 @@ Feature: User Registration on Basketball England
 
     Scenario: Last name missing
       Given User navigates to the registration page with "chrome"
-      And Entered date of brith "21/05/2006"
+      And Entered date of birth "21/05/2006"
       And Entered first name "Emil"
       And Entered last name ""
       And Entered Email Adress "mstira@live.com"
@@ -33,7 +33,7 @@ Feature: User Registration on Basketball England
 
   Scenario Outline: Register user with different input variations
     Given User navigates to the registration page with "chrome"
-    And Entered date of brith "21/05/2006"
+    And Entered date of birth "21/05/2006"
     And Entered first name "<first_name>"
     And Entered last name "<last_name>"
     And Entered Email Adress "<email>"
