@@ -4,8 +4,8 @@ Feature: User Registration on Basketball England
     And Entered date of brith "21/05/2006"
     And Entered first name "Semon"
     And Entered last name "Andy"
-    And Entered Email Adress "mstira5@live.com"
-    And Entered confirmed Email Adress "mstira5@live.com"
+    And Entered Email Adress "mstira10@live.com"
+    And Entered confirmed Email Adress "mstira10@live.com"
     And Entered password "ms5919"
     And Entered Retyped password "ms5919"
     And Checked box for marketing communications
