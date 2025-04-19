@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 public class registerSteps {
     WebDriver driver;
+    
 
 private WebElement waitForElement(By locator) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -35,18 +36,28 @@ private WebElement waitForElement(By locator) {
         WebDriverManager.firefoxdriver().setup();
         WebDriverManager.chromedriver().setup();
         if (browser.equals("chrome")) {
-            driver = new ChromeDriver();
-            driver.manage().window().maximize();
-            driver.get("https://membership.basketballengland.co.uk/NewSupporterAccount");
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--headless=new");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--disable-gpu");
+            options.addArguments("--remote-allow-origins=*");
+            options.addArguments("--disable-extensions");
+            options.addArguments("--window-size=1920,1080");
+            driver = new ChromeDriver(options);
+
+
         } else if (browser.equals("fireFox")) {
-            driver = new FirefoxDriver();
-            driver.manage().window().maximize();
-            driver.get("https://membership.basketballengland.co.uk/NewSupporterAccount");
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+            FirefoxOptions options = new FirefoxOptions();
+            options.addArguments("--headless");
+            driver = new FirefoxDriver(options);
+
+
 
         }
-
+        driver.manage().window().maximize();
+        driver.get("https://membership.basketballengland.co.uk/NewSupporterAccount");
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
     }
 
 
@@ -148,7 +159,6 @@ private WebElement waitForElement(By locator) {
         WebElement errorMessage;
         String actualMessage;
         switch (expectedResult.toLowerCase()) {
-        
 
             case "missing_last_name":
                 // Check if error message for missing last name is displayed
