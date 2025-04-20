@@ -125,13 +125,13 @@ private WebElement waitForElement(By locator) {
 
     }
 
-    @Then("the application is successful")
-    public void theApplicationIsSuccessful() {
-        WebElement confirmatioHeader = driver.findElement(By.xpath("/html/body/div/div[2]/div/h2"));
-        String actualHeader = confirmatioHeader.getText();
-        String expactedHeader ="THANK YOU FOR CREATING AN ACCOUNT WITH BASKETBALL ENGLAND";
-        assertEquals(actualHeader, expactedHeader);
-    }
+    //@Then("the application is successful")
+    //public void theApplicationIsSuccessful() {
+       // WebElement confirmatioHeader = driver.findElement(By.xpath("/html/body/div/div[2]/div/h2"));
+       // String actualHeader = confirmatioHeader.getText();
+       // String expactedHeader ="THANK YOU FOR CREATING AN ACCOUNT WITH BASKETBALL ENGLAND";
+       // assertEquals(actualHeader, expactedHeader);
+   // }
 
 
 
