@@ -1,24 +1,46 @@
-name: Kör tester automatiskt
+name: Run Cucumber Selenium Tests
 
 on:
   push:
-    branches: [ main ]     # kör varje gång du pushar till main
+    branches: [ main ]
   pull_request:
-    branches: [ main ]     # även när någon gör en pull request
+    branches: [ main ]
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        browser: [chrome, firefox]
+
+    env:
+      BROWSER: ${{ matrix.browser }}
+
     steps:
-    - name: Klona repot
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Installera Java och Maven
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: '17'
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-    - name: Bygg projektet och kör tester
-      run: mvn clean test
+      - name: Install Chrome
+        if: matrix.browser == 'chrome'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      - name: Install Firefox
+        if: matrix.browser == 'firefox'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y firefox
+
+      - name: Set up Maven (optional)
+        run: mvn compile
+
+      - name: Run Cucumber Tests
+        run: mvn test
