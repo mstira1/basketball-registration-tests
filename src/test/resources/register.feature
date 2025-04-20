@@ -1,6 +1,6 @@
 Feature: User Registration on Basketball England
   Scenario: Register user
-    Given User navigates to the registration page with "chrome"
+    Given User navigates to the registration page
     And Entered date of birth "21/05/2006"
     And Entered first name "Semon"
     And Entered last name "Andy"
@@ -16,7 +16,7 @@ Feature: User Registration on Basketball England
     Then the application is successful
 
     Scenario: Last name missing
-      Given User navigates to the registration page with "chrome"
+      Given User navigates to the registration page
       And Entered date of birth "21/05/2006"
       And Entered first name "Emil"
       And Entered last name ""
@@ -32,7 +32,7 @@ Feature: User Registration on Basketball England
       Then the application not successful
 
   Scenario Outline: Register user with different input variations
-    Given User navigates to the registration page with "chrome"
+    Given User navigates to the registration page
     And Entered date of birth "21/05/2006"
     And Entered first name "<first_name>"
     And Entered last name "<last_name>"
