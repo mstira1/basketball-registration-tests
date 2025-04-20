@@ -30,17 +30,24 @@ private WebElement waitForElement(By locator) {
 
 
 
-    @Given("User navigates to the registration page with {string}")
-    public void User_navigates_to_the_registration_page(String browser) {
+    @Given("User navigates to the registration page")
+    public void userNavigatesToTheRegistrationPage() {
+        String browser = System.getenv("BROWSER"); // hämtar från GitHub Actions
 
+        if (browser == null) {
+            browser = "chrome"; // default om den inte är satt
+        }
 
-        if (browser.equals("chrome")) {
+        if (browser.equalsIgnoreCase("chrome")) {
             WebDriverManager.chromedriver().setup();
             driver = new ChromeDriver();
-        } else if (browser.equals("fireFox")) {
+        } else if (browser.equalsIgnoreCase("firefox")) {
             WebDriverManager.firefoxdriver().setup();
             driver = new FirefoxDriver();
+        } else {
+            throw new RuntimeException("Unsupported browser: " + browser);
         }
+
         driver.manage().window().maximize();
         driver.get("https://membership.basketballengland.co.uk/NewSupporterAccount");
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
@@ -181,3 +188,6 @@ private WebElement waitForElement(By locator) {
 
 
 }
+
+
+
