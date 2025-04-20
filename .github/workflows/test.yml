@@ -1,44 +1,47 @@
-name: Java CI with Cucumber
+name: Run Cucumber Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ master ]
+    branches: [ "master" ]
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
 
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven
 
-      - name: Build project
-        run: mvn clean install
+    - name: Build and Test with Maven
+      run: mvn clean verify
 
-      - name: Run Cucumber tests
-        run: mvn test
+    - name: Upload Cucumber HTML report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: cucumber-html-report
+        path: target/cucumber-html-reports
 
-      - name: Generate Cucumber HTML report
-        run: mvn verify
-
-      - name: Upload Cucumber HTML report
-        uses: actions/upload-artifact@v4
-        with:
-          name: cucumber-html-report
-          path: target/cucumber-html-reports
+    - name: Upload Surefire Reports (JUnit logs)
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: surefire-reports
+        path: target/surefire-reports
