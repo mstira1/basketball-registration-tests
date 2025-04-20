@@ -1,46 +1,44 @@
-name: Run Cucumber Selenium Tests
+name: Java CI with Cucumber
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        browser: [chrome, firefox]
-
-    env:
-      BROWSER: ${{ matrix.browser }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Java
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
           java-version: '17'
+          distribution: 'temurin'
 
-      - name: Install Chrome
-        if: matrix.browser == 'chrome'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven
 
-      - name: Install Firefox
-        if: matrix.browser == 'firefox'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y firefox
+      - name: Build project
+        run: mvn clean install
 
-      - name: Set up Maven (optional)
-        run: mvn compile
-
-      - name: Run Cucumber Tests
+      - name: Run Cucumber tests
         run: mvn test
+
+      - name: Generate Cucumber HTML report
+        run: mvn verify
+
+      - name: Upload Cucumber HTML report
+        uses: actions/upload-artifact@v3
+        with:
+          name: cucumber-html-report
+          path: target/cucumber-html-reports
