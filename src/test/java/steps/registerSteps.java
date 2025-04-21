@@ -1,63 +1,79 @@
 package steps;
 
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.en.*;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
+import java.util.UUID;
 
 public class registerSteps {
-    WebDriver driver;
+    private WebDriver driver;
+    private WebDriverWait wait;
+    private static boolean isFirstTest = true;
 
-private WebElement waitForElement(By locator) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    @Before
+    public void setUp() {
+        if (isFirstTest) {
+            try {
+                Thread.sleep(2000);
+                isFirstTest = false;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    @After
+    public void tearDown() {
+        // تأخير بين الاختبارات
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+
+    private WebElement waitForElement(By locator) {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
-
-
     @Given("User navigates to the registration page")
     public void userNavigatesToTheRegistrationPage() {
-        String browser = System.getenv("BROWSER"); // hämtar från GitHub Actions
-
-        if (browser == null) {
-            browser = "chrome"; // default om den inte är satt
-        }
+        String browser = System.getenv("BROWSER");
+        if (browser == null) browser = "chrome";
 
         if (browser.equalsIgnoreCase("chrome")) {
             WebDriverManager.chromedriver().setup();
-            driver = new ChromeDriver();
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+            driver = new ChromeDriver(options);
         } else if (browser.equalsIgnoreCase("firefox")) {
             WebDriverManager.firefoxdriver().setup();
-            driver = new FirefoxDriver();
-        } else {
-            throw new RuntimeException("Unsupported browser: " + browser);
+            FirefoxOptions options = new FirefoxOptions();
+            options.addArguments("--headless");
+            driver = new FirefoxDriver(options);
         }
 
+        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         driver.manage().window().maximize();
         driver.get("https://membership.basketballengland.co.uk/NewSupporterAccount");
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
     }
-
 
     @And("Entered date of birth {string}")
     public void entered_date_of_brith(String birth) {
-
-        driver.findElement(By.xpath("//*[@id=\"dp\"]")).sendKeys(birth);
+        waitForElement(By.xpath("//*[@id=\"dp\"]")).sendKeys(birth);
     }
 
     @And("Entered first name {string}")
@@ -121,8 +137,13 @@ private WebElement waitForElement(By locator) {
 
     @When("Press for confirm and join")
     public void pressForConfirmAndJoin() {
-        driver.findElement(By.xpath("//*[@id=\"signup_form\"]/div[12]/input")).click();
-
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        waitForElement(By.xpath("//*[@id=\"signup_form\"]/div[12]/input")).click();
+    }
     }
 
 //    @Then("the application is successful")
@@ -147,8 +168,13 @@ private WebElement waitForElement(By locator) {
 
     }
 
-    @Then("the application result should be {string}")
+   @Then("the application result should be {string}")
     public void theApplicationResultShouldBe(String expectedResult) {
+        try {
+            Thread.sleep(1000); 
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         WebElement errorMessage;
         String actualMessage;
         switch (expectedResult.toLowerCase()) {
