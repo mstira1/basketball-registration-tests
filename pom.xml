@@ -11,15 +11,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
-        <cucumber.version>7.15.0</cucumber.version>
+        <cucumber.version>7.16.1</cucumber.version>
+        <selenium.version>4.12.0</selenium.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>central</id>
-            <url>https://repo.maven.apache.org/maven2</url>
-        </repository>
-    </repositories>
 
     <pluginRepositories>
         <pluginRepository>
@@ -40,6 +34,13 @@
             <artifactId>cucumber-junit</artifactId>
             <version>${cucumber.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Selenium -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
         </dependency>
     </dependencies>
 
@@ -71,6 +72,12 @@
                 <configuration>
                     <glue>steps</glue>
                     <features>src/test/resources</features>
+                    <plugins>
+                        <plugin>
+                            <name>pretty</name>
+                            <name>html:target/cucumber-reports.html</name>
+                        </plugin>
+                    </plugins>
                 </configuration>
             </plugin>
         </plugins>
