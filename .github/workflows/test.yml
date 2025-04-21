@@ -1,47 +1,47 @@
-name: Run Cucumber Tests
+name: Basketball England Registration Tests
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ main ]
 
 jobs:
   test:
+    name: Run Tests (${{ matrix.browser }})
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        browser: [ chrome, firefox ]  # يفي بمتطلب VG لاختبار متصفحين
+        java-version: [ '17' ]
+    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
-    - name: Set up Java
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-
-    - name: Cache Maven packages
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven
-
-    - name: Build and Test with Maven
-      run: mvn clean verify
-
-    - name: Upload Cucumber HTML report
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: cucumber-html-report
-        path: target/cucumber-html-reports
-
-    - name: Upload Surefire Reports (JUnit logs)
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: surefire-reports
-        path: target/surefire-reports
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up Java ${{ matrix.java-version }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+          cache: 'maven'
+          
+      - name: Set up browsers
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgbm-dev
+          
+      - name: Run tests
+        env:
+          BROWSER: ${{ matrix.browser }}  # يمرر المتصفح المحدد إلى الاختبارات
+        run: |
+          mvn test -Dbrowser=${{ matrix.browser }}
+          
+      - name: Upload test reports
+        if: always()  # يحمل النتائج حتى لو فشلت الاختبارات
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports-${{ matrix.browser }}
+          path: |
+            target/surefire-reports/**
+            target/cucumber-reports/**
