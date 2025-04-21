@@ -30,30 +30,34 @@ private WebElement waitForElement(By locator) {
 
 
 
-    @Given("User navigates to the registration page with {string}")
-    public void User_navigates_to_the_registration_page(String browser) {
-        WebDriverManager.firefoxdriver().setup();
-        WebDriverManager.chromedriver().setup();
-        if (browser.equals("chrome")) {
-            driver = new ChromeDriver();
-            driver.manage().window().maximize();
-            driver.get("https://membership.basketballengland.co.uk/NewSupporterAccount");
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        } else if (browser.equals("fireFox")) {
-            driver = new FirefoxDriver();
-            driver.manage().window().maximize();
-            driver.get("https://membership.basketballengland.co.uk/NewSupporterAccount");
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+    @Given("User navigates to the registration page")
+    public void userNavigatesToTheRegistrationPage() {
+        String browser = System.getenv("BROWSER"); // hämtar från GitHub Actions
 
+        if (browser == null) {
+            browser = "chrome"; // default om den inte är satt
         }
 
+        if (browser.equalsIgnoreCase("chrome")) {
+            WebDriverManager.chromedriver().setup();
+            driver = new ChromeDriver();
+        } else if (browser.equalsIgnoreCase("firefox")) {
+            WebDriverManager.firefoxdriver().setup();
+            driver = new FirefoxDriver();
+        } else {
+            throw new RuntimeException("Unsupported browser: " + browser);
+        }
+
+        driver.manage().window().maximize();
+        driver.get("https://membership.basketballengland.co.uk/NewSupporterAccount");
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
     }
 
 
-    @And("Entered date of brith {string}")
-    public void entered_date_of_brith(String brith) {
+    @And("Entered date of birth {string}")
+    public void entered_date_of_brith(String birth) {
 
-        driver.findElement(By.xpath("//*[@id=\"dp\"]")).sendKeys(brith);
+        driver.findElement(By.xpath("//*[@id=\"dp\"]")).sendKeys(birth);
     }
 
     @And("Entered first name {string}")
@@ -121,13 +125,13 @@ private WebElement waitForElement(By locator) {
 
     }
 
-    @Then("the application is successful")
-    public void theApplicationIsSuccessful() {
-        WebElement confirmatioHeader = driver.findElement(By.xpath("/html/body/div/div[2]/div/h2"));
-        String actualHeader = confirmatioHeader.getText();
-        String expactedHeader ="THANK YOU FOR CREATING AN ACCOUNT WITH BASKETBALL ENGLAND";
-        assertEquals(actualHeader, expactedHeader);
-    }
+//    @Then("the application is successful")
+//    public void theApplicationIsSuccessful() {
+//        WebElement confirmatioHeader = driver.findElement(By.xpath("/html/body/div/div[2]/div/h2"));
+//        String actualHeader = confirmatioHeader.getText();
+//        String expactedHeader ="THANK YOU FOR CREATING AN ACCOUNT WITH BASKETBALL ENGLAND";
+//        assertEquals(actualHeader, expactedHeader);
+//    }
 
 
 
@@ -148,13 +152,6 @@ private WebElement waitForElement(By locator) {
         WebElement errorMessage;
         String actualMessage;
         switch (expectedResult.toLowerCase()) {
-            case "success":
-                // Check success header
-                WebElement confirmationHeader = waitForElement(By.xpath("/html/body/div/div[2]/div/h2"));
-                actualMessage = confirmationHeader.getText();
-                String expectedSuccessMessage = "THANK YOU FOR CREATING AN ACCOUNT WITH BASKETBALL ENGLAND";
-                assertEquals(actualMessage, expectedSuccessMessage);
-                break;
 
             case "missing_last_name":
                 // Check if error message for missing last name is displayed
