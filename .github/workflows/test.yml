@@ -1,47 +1,40 @@
-name: Basketball England Registration Tests
+name: Selenium Cucumber Tests
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
   test:
-    name: Run Tests (${{ matrix.browser }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        browser: [ chrome, firefox ]  # يفي بمتطلب VG لاختبار متصفحين
-        java-version: [ '17' ]
+        browser: [chrome, firefox]
+        java: [17]
     
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+    
+    - name: Set up JDK ${{ matrix.java }}
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ matrix.java }}
+        distribution: 'temurin'
+    
+    - name: Install browsers
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser firefox
         
-      - name: Set up Java ${{ matrix.java-version }}
-        uses: actions/setup-java@v3
-        with:
-          java-version: ${{ matrix.java-version }}
-          distribution: 'temurin'
-          cache: 'maven'
-          
-      - name: Set up browsers
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgbm-dev
-          
-      - name: Run tests
-        env:
-          BROWSER: ${{ matrix.browser }}  # يمرر المتصفح المحدد إلى الاختبارات
-        run: |
-          mvn test -Dbrowser=${{ matrix.browser }}
-          
-      - name: Upload test reports
-        if: always()  # يحمل النتائج حتى لو فشلت الاختبارات
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-reports-${{ matrix.browser }}
-          path: |
-            target/surefire-reports/**
-            target/cucumber-reports/**
+    - name: Run tests
+      env:
+        BROWSER: ${{ matrix.browser }}
+      run: |
+        mvn test -Dbrowser=${{ matrix.browser }}
+        
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results-${{ matrix.browser }}
+        path: |
+          target/surefire-reports/**
+          target/cucumber-reports/**
