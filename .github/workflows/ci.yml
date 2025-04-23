@@ -5,6 +5,9 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [ chrome, firefox ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

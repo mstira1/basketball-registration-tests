@@ -178,6 +178,7 @@ private WebElement waitForElement(By locator) {
                 String expectedErrorMessage = "You must confirm that you have read and accepted our Terms and Conditions";
                 assertEquals(actualMessage, expectedErrorMessage);
 
+
                 break;
 
             default:
