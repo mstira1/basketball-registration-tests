@@ -4,7 +4,7 @@ Feature: User Registration on Basketball England
     And Entered date of birth "21/05/2006"
     And Entered first name "Semon"
     And Entered last name "Andy"
-    And Entered Email Adress "mstira8@live.com"
+    And Entered Email Adress "mstira85@live.com"
     And Entered confirmed Email Adress "mstira8@live.com"
     And Entered password "ms5919"
     And Entered Retyped password "ms5919"
